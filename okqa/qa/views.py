@@ -31,7 +31,7 @@ ORDER_OPTIONS = {'date': '-created_at', 'rating': '-rating'}
 def home(request):
     return render(request, "home.html")
 
-def questions(request, tags = None):
+def questions(request, tags=None):
     """
     list questions ordered by number of upvotes
     """
@@ -49,8 +49,8 @@ def questions(request, tags = None):
         context['tags'] = TaggedQuestion.on_site.values('tag__name').annotate(count=Count("tag"))
 
     context['questions'] = questions
-    context['by_date'] = order_opt=='date'
-    context['by_rating'] = order_opt=='rating'
+    context['by_date'] = order_opt == 'date'
+    context['by_rating'] = order_opt == 'rating'
     return render(request, "qa/question_list.html", context)
 
 def tagged_questions(request, tags):
@@ -130,23 +130,6 @@ class QuestionDetail(JSONResponseMixin, SingleObjectTemplateResponseMixin, BaseD
                 return SingleObjectTemplateResponseMixin.render_to_response(self, context)
 
 
-def add_question(request):
-    if not request.user.is_authenticated():
-        return HttpResponseForbidden(_("You cannot post questions"))
-
-    subject = request.POST.get("subject")
-    content = request.POST.get("content")
-
-    q = Question(author=request.user, subject=subject, content=content)
-    q.save()
-
-    tags = parse_tags(request.POST.get("tags", []))
-    for tag in tags:
-        q.tags.add(tag)
-
-    return HttpResponse("OK")
-
-
 @login_required
 def post_answer(request, q_id):
 
@@ -184,13 +167,14 @@ def post_question(request):
             question.author = request.user
             question.save()
             form.save_m2m()
+            signals.question_posted.send(sender=None, site=get_current_site(request), question=question)
             return HttpResponseRedirect(question.get_absolute_url())
 
         #TODO: make this better - show the form
         # return HttpResponseRedirect("/#question_modal")
     elif request.method == "GET":
         form = QuestionForm()
-     
+
     return render(request, "qa/post_question.html", {"form": form})
 
 

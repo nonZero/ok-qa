@@ -1,0 +1,37 @@
+{% load i18n %}
+{% block subject %}{% blocktrans with q=question.subject %}New Question: "{{q}}"{% endblocktrans %}{% endblock %}
+
+{% block plain %}
+{% blocktrans with q=question.author %}A new qusetion was just posted by {{a}}{% endblocktrans %}:
+
+======================================================
+{{question.subject}}
+======================================================
+
+{{question.content}}
+
+
+{% blocktrans %}Click here to view and answer it online{% endblocktrans %}:
+http://{{site}}{{question.get_absolute_url}}
+{% endblock %}
+
+{% block html %}{% autoescape on %}
+
+<p>
+    <i>{% blocktrans with q=question.author %}A new qusetion was just posted by {{a}}{% endblocktrans %}:</i>
+</p>
+
+<h2>
+    {{question.subject}}
+</h2>
+<blockquote>
+{{question.content|escape|linebreaks}}
+</blockquote>
+
+<p>
+    <i>{% blocktrans %}Click here to view and rate it online{% endblocktrans %}:</i><br>
+    <a href="http://{{site}}{{question.get_absolute_url}}">http://{{site}}{{question.get_absolute_url}}</a>
+</p>
+{% endautoescape %}
+
+{% endblock %}

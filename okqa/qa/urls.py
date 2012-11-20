@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import patterns, url
 from okqa.qa.sitemaps import sitemaps
 from .views import *
+import okqa.emails.views # connect signals
 
 urlpatterns = patterns('',
     url(r'^/?$', 'okqa.qa.views.questions', name='home'),

@@ -1,13 +1,12 @@
+from okqa.emails.routing import get_recipients_for_new_question, \
+    get_recipients_for_new_answer
 from templated_email import send_templated_mail
 import logging
-from django.conf import settings
 
 
 def send_new_answer(sender, site, answer, **kwargs):
 
-    recipients = [answer.question.author]
-
-    for user in recipients:
+    for user in get_recipients_for_new_answer(answer):
         logging.info('Sending new answer notification to %s' % user.email)
 
         send_templated_mail(
@@ -19,10 +18,23 @@ def send_new_answer(sender, site, answer, **kwargs):
                     'answer': answer,
                     'user': user,
                 },
-                # Optional:
-                # cc=['cc@example.com'],
-                # bcc=['bcc@example.com'],
                 # headers={'My-Custom-Header':'Custom Value'},
-                # template_prefix="my_emails/",
-                # template_suffix="email",
+        )
+
+
+def send_new_question(sender, site, question, **kwargs):
+
+    for user in get_recipients_for_new_question(question):
+        logging.info('Sending new question notification to %s' % user.email)
+
+        send_templated_mail(
+                template_name='new_question',
+                from_email=None,
+                recipient_list=[user.email],
+                context={
+                    'site': site,
+                    'question': question,
+                    'user': user,
+                },
+                # headers={'My-Custom-Header':'Custom Value'},
         )

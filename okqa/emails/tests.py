@@ -4,6 +4,7 @@ from django.core import mail
 from django.test import TestCase
 from okqa.qa.models import Question
 import sending
+from okqa.user.candidates import candidate_group
 
 
 class EmailTest(TestCase):
@@ -13,6 +14,7 @@ class EmailTest(TestCase):
                                 "commmon@example.com", "pass")
         self.candidate_user = User.objects.create_user("candidate",
                                 "candidate@example.com", "pass")
+        self.candidate_user.groups.add(candidate_group)
         add_answer = Permission.objects.get(codename="add_answer")
         self.candidate_user.user_permissions.add(add_answer)
         self.q = Question.objects.create(author=self.common_user,
@@ -24,6 +26,10 @@ class EmailTest(TestCase):
         self.q.tags.create(name="abc")
         self.q.tags.create(name="def")
 
+        self.another_candidate = User.objects.create_user("candidate2",
+                                "another_candidate@example.com", "pass2")
+        self.another_candidate.groups.add(candidate_group)
+
     def test_new_answer_email(self):
         site = Site.objects.get_current()
         sending.send_new_answer(None, site, self.a)
@@ -32,6 +38,18 @@ class EmailTest(TestCase):
 #        print mail.outbox[0].subject
 #        print mail.outbox[0].body
 #        print mail.outbox[0].alternatives[0][0]
+#        assert False
+
+    def test_new_question_email(self):
+        site = Site.objects.get_current()
+        sending.send_new_question(None, site, self.q)
+        self.assertEqual(len(mail.outbox), 2)
+#        for e in mail.outbox:
+#            print type(e)
+#            print e.to
+#            print e.subject
+#            print e.body
+#            print e.alternatives[0][0]
 #        assert False
 
     def tearDown(self):
