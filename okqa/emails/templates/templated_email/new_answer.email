@@ -1,0 +1,28 @@
+{% load i18n %}
+{% block subject %}{% blocktrans with a=answer.author q=answer.question.subject %}New answer by {{a}} To "{{q}}"{% endblocktrans %}{% endblock %}
+
+{% block plain %}
+{% blocktrans with a=answer.author q=answer.question.subject %}A new answer was just posted to "{{q}}" by {{a}}{% endblocktrans %}:
+
+{{answer.content}}
+
+{% blocktrans %}Click here to view and rate it online{% endblocktrans %}:
+http://{{site}}{{answer.get_absolute_url}}
+{% endblock %}
+
+{% block html %}{% autoescape on %}
+
+<h2>
+{% blocktrans with a=answer.author q=answer.question.subject %}A new answer was just posted to "{{q}}" by {{a}}{% endblocktrans %}:
+</h2>
+<blockquote>
+{{answer.content|escape|linebreaks}}
+</blockquote>
+
+<p>
+    <i>{% blocktrans %}Click here to view and rate it online{% endblocktrans %}:</i><br>
+    <a href="http://{{site}}{{answer.get_absolute_url}}">http://{{site}}{{answer.get_absolute_url}}</a>
+</p>
+{% endautoescape %}
+
+{% endblock %}

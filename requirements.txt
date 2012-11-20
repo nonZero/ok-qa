@@ -24,3 +24,5 @@ Unipath==0.2.1
 gunicorn==0.15.0
 psycopg2==2.4.5
 django-social-auth==0.7.9
+django-templated-email==0.4.7
+Fabric==1.5.1

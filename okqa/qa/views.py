@@ -16,6 +16,7 @@ from taggit.utils import parse_tags
 
 from okqa.qa.forms import AnswerForm, QuestionForm
 from .models import *
+import signals
 
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, BaseDetailView
@@ -148,7 +149,9 @@ def add_question(request):
 
 @login_required
 def post_answer(request, q_id):
-    context = {}
+
+    is_new = True
+
     question = Question.objects.get(id=q_id)
 
     if not question.can_answer(request.user):
@@ -157,12 +160,18 @@ def post_answer(request, q_id):
     try:
         # make sure the user haven't answered already
         answer = question.answers.get(author=request.user)
+        is_new = False
+
     except question.answers.model.DoesNotExist:
         answer = Answer(author=request.user, question=question)
 
     answer.content = request.POST.get("content")
 
     answer.save()
+
+    if is_new:
+        signals.answer_posted.send(sender=None, site=get_current_site(request), answer=answer)
+
     return HttpResponseRedirect(question.get_absolute_url())
 
 
