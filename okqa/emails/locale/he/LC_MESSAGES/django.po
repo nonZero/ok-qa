@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-19 16:40+0200\n"
+"POT-Creation-Date: 2012-11-20 12:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,10 +22,28 @@ msgid "New answer by %(a)s To \"%(q)s\""
 msgstr "תשובה חדשה מאת %(a)s לשאלה \"%(q)s\""
 
 #: .\templates\templated_email\new_answer.email.py:5
+#: .\templates\templated_email\new_answer.email.py:16
 #, python-format
 msgid "A new answer was just posted to \"%(q)s\" by %(a)s"
 msgstr "תשובה חדשה לשאלה \"%(q)s\" נשלחה על ידי %(a)s"
 
 #: .\templates\templated_email\new_answer.email.py:9
+#: .\templates\templated_email\new_answer.email.py:23
+#: .\templates\templated_email\new_question.email.py:32
 msgid "Click here to view and rate it online"
 msgstr "לחצ/י כאן בכדי לראות או לדרג את התשובה"
+
+#: .\templates\templated_email\new_question.email.py:2
+#, python-format
+msgid "New Question: \"%(q)s\""
+msgstr "שאלה חדשה: \"%(q)s\""
+
+#: .\templates\templated_email\new_question.email.py:5
+#: .\templates\templated_email\new_question.email.py:21
+#, python-format
+msgid "A new qusetion was just posted by %(a)s"
+msgstr "שאלה חדשה מאת %(a)s"
+
+#: .\templates\templated_email\new_question.email.py:14
+msgid "Click here to view and answer it online"
+msgstr "לחצ/י כאן בכדי לראות או לענות על השאלה"
