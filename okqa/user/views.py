@@ -1,23 +1,19 @@
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
-from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
+from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
-from django.contrib import messages
 
 from registration.backends import get_backend
 from registration.models import RegistrationProfile
 from .forms import *
 from .models import *
+from okqa.user.candidates import candidate_group
 
-# TODO: move to settings
-CANDIDATES_GROUP_NAME = "candidates"
-candidate_group, created = Group.objects.get_or_create(name=CANDIDATES_GROUP_NAME)
 
-def login (request):
+def login(request):
     if request.user.is_authenticated():
         return HttpResponseForbidden(_('You are already logged in'))
 
@@ -32,6 +28,7 @@ def login (request):
             return HttpResponseBadRequest()
     else:
         return HttpResponseForbidden(_('You need to use POST to login'))
+
 
 def candidate_list(request):
     """
@@ -51,8 +48,9 @@ def user_detail(request, slug):
     user.url = profile.url
 
     # todo: support members as well as candidates
-    return render(request, "user/candidate_detail.html", 
+    return render(request, "user/candidate_detail.html",
             {"candidate": user, "answers": answers, "questions": questions})
+
 
 @login_required
 def edit_profile(request):
@@ -69,10 +67,11 @@ def edit_profile(request):
         form = ProfileForm(request.user)
     return render(request, "user/edit_profile.html", {"form": form})
 
+
 def candidate_activate(request, activation_key):
     if request.method == "POST":
         backend = get_backend ('okqa.user.candidate_registration_backend.CandidateBackend')
-        user = backend.activate (request, activation_key)
+        user = backend.activate(request, activation_key)
         if user:
             form = ActivateCandidateForm(user, data=request.POST)
             if form.is_valid():

@@ -1,9 +1,7 @@
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from okqa.qa.models import Question
-
-candidate_group = Group.objects.filter(name='candidates')
+from okqa.user.candidates import candidate_group
 
 question_dict = {
     'queryset': Question.objects.all(),
@@ -11,7 +9,7 @@ question_dict = {
 }
 
 candidate_dict = {
-    'queryset': User.objects.filter(groups__in=candidate_group),
+    'queryset': User.objects.filter(groups__in=[candidate_group]),
     'date_field': 'last_login',
 }
 
